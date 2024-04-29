@@ -385,6 +385,7 @@ impl<X: XlibRef> XlibClient<X> {
                 let items = items.assume_init();
                 let _bytes = bytes.assume_init();
                 let prop = prop.assume_init();
+                log::debug!("!!!prop, items: {} {}", prop as usize, items);
 
                 let data = std::slice::from_raw_parts(prop, items as usize);
 
