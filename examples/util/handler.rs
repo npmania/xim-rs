@@ -11,7 +11,7 @@ pub struct ExampleHandler {
     pub window: u32,
 }
 
-impl<C: Client<XEvent = x11rb::protocol::xproto::KeyPressEvent>> ClientHandler<C>
+impl<C: Client> ClientHandler<C>
     for ExampleHandler
 {
     fn handle_connect(&mut self, client: &mut C) -> Result<(), ClientError> {
@@ -67,7 +67,7 @@ impl<C: Client<XEvent = x11rb::protocol::xproto::KeyPressEvent>> ClientHandler<C
         flag: xim::ForwardEventFlag,
         xev: C::XEvent,
     ) -> Result<(), ClientError> {
-        log::info!("Handle forward event {:?}, {}", flag, xev.detail);
+        log::info!("Handle forward event {:?}", flag);
         Ok(())
     }
 
