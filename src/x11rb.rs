@@ -4,6 +4,8 @@
 //! client or server.
 //!
 //! [`x11rb`]: https://crates.io/crates/x11rb
+use crate::std::io::Write;
+use std::io::Error;
 
 use alloc::format;
 use alloc::string::String;
@@ -581,13 +583,22 @@ impl<C: HasConnection> X11rbClient<C> {
             let data = self
                 .conn()
                 .get_property(true, msg.window, atom, AtomEnum::ANY, 0, length)?
-                .reply()?
-                .value;
-            let req = xim_parser::read(&data)?;
+                .reply()?;
+            let d2 = data.clone();
+            log::info!("data.format: {:?}", d2.format);
+            log::info!("data.sequence: {:?}", d2.sequence);
+            log::info!("data.length: {:?}", d2.length);
+            log::info!("data.type_: {:?}", d2.type_);
+            log::info!("data.bytes_after: {:?}", d2.bytes_after);
+            log::info!("data.value_len: {:?}", d2.value_len);
+            log::info!("data.value: {:?}", d2.value);
+            let data = data.value;
+            let req = xim_parser::read(&data);
+            let req = req.unwrap();
             client_handle_request(self, handler, req)?;
         } else if msg.format == 8 {
             let data = msg.data.as_data8();
-            let req: xim_parser::Request = xim_parser::read(&data)?;
+            let req: xim_parser::Request = xim_parser::read(&data).unwrap();
             client_handle_request(self, handler, req)?;
         }
 

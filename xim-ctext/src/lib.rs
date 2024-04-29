@@ -150,7 +150,17 @@ pub fn compound_text_to_utf8(bytes: &[u8]) -> Result<String, DecodeError> {
                     Some(0x41) => Err(DecodeError::UnsupportedEncoding),
 
                     // KR
-                    Some(0x43) => Err(DecodeError::UnsupportedEncoding),
+                    Some(0x43) => {
+                        let left = iter.as_slice();
+                        let mut decoder = encoding_rs::EUC_KR.new_decoder_without_bom_handling();
+                        let mut out = String::new();
+
+                        //decode!(decoder, &mut out, &[0x1B, 0x24, 0x43], false);
+                        std::println!("{:?}", left);
+                        decode!(decoder, &mut out, left, true);
+
+                        Ok(out)
+                    }
 
                     _ => Err(DecodeError::InvalidEncoding),
                 },

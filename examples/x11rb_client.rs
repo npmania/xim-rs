@@ -44,7 +44,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     loop {
         let e = conn.wait_for_event()?;
-
+        log::trace!("event: {:#?}", e);
         if client.filter_event(&e, &mut handler)? {
             continue;
         } else if let Event::Error(err) = e {
@@ -55,7 +55,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Event::KeyPress(e) | Event::KeyRelease(e) => {
                     if handler.connected {
                         log::trace!("Send: {:?}", e);
-                        client.forward_event(
+                        let result = client.forward_event(
                             handler.im_id,
                             handler.ic_id,
                             ForwardEventFlag::empty(),
